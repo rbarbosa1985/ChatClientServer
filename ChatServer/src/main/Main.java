@@ -4,8 +4,7 @@
  */
 package main;
 
-import java.net.ServerSocket;
-import socket.ConnectionCliente;
+import form.JfrmPrincipal;
 
 /**
  *
@@ -18,21 +17,8 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        try {
-
-            ServerSocket servidor = new ServerSocket(7000);
-            System.out.println("Servidor iniciado...");
-
-            while (true) {
-
-                ConnectionCliente cli = new ConnectionCliente(servidor.accept());
-                cli.start();
-
-            }
-
-        } catch (Exception e) {
-            System.out.println("Ocorreu um erro!");
-        }
+        JfrmPrincipal app = new JfrmPrincipal();
+        app.setVisible(true);
     }
 
 }
