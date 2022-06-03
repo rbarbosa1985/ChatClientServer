@@ -101,22 +101,25 @@ public class JfrmPrincipal extends javax.swing.JFrame {
 
     private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         // TODO add your handling code here:
+        txtLog.append("Servidor desconectado!\r\n");
         con.stop();
         dispose();
     }//GEN-LAST:event_btnFecharActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
         // TODO add your handling code here:
-        
+        txtLog.append("Servidor desconectado!\r\n");
         con.stop();
         onActive();
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         // TODO add your handling code here:
+        txtLog.append("Conectando...\r\n");
         try {
             server = new ServerSocket(7777);
-            JOptionPane.showMessageDialog(null,"Servidor ativo na porta: 7777");
+            JOptionPane.showMessageDialog(null,"Servidor ativo na porta: 7777\r\n");
+            txtLog.append("Conectado na porta: 7777\r\n");
             con = new Connection(server, "ThreadServer");
 
             

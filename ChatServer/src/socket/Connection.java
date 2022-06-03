@@ -51,10 +51,9 @@ public class Connection implements Runnable {
             if (!server.isClosed()) {
                 server.close();
             }
-            System.out.println("socket.Connection.stop()");
             this.end = true;
         } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());;
         }
     }
 }
