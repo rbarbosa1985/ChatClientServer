@@ -2,43 +2,39 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package socket;
+package connections;
 
-import java.io.BufferedWriter;
+import entities.User;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
  *
  * @author beto_
  */
-public class Connection implements Runnable {
+public class ServerSide implements Runnable {
 
+    private List<User> users;
     private ServerSocket server;
     private Boolean end;
-    private String nome;
-    private ArrayList<BufferedWriter> clientes;
-    private volatile boolean isRunning = true;
 
-    public Connection(ServerSocket server, String nome) {
-        this.nome = nome;
-        this.server = server;
+    public ServerSide(ServerSocket server) {
+        this.users = new ArrayList<User>();
         this.end = false;
-        clientes = new ArrayList<BufferedWriter>();
-        new Thread(this, "ThreadServer").start();
+        this.server = server;
+        new Thread(this, "Thread Server").start();
     }
 
     @Override
     public void run() {
-        try {
+         try {
             while (true) {
-                Socket con;
-                con = server.accept();
-                Servidor t = new Servidor(con, clientes);
+                Socket connection;
+                connection = server.accept();
+                ClientConnection client = new ClientConnection(connection, users);
                 synchronized (this) {
                     if (end) {
                         break;
@@ -60,4 +56,5 @@ public class Connection implements Runnable {
             System.out.println(ex.getMessage());;
         }
     }
+
 }

@@ -14,6 +14,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -41,7 +43,7 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
     private JTextField txtMsg;
     private JButton btnSend;
     private JButton btnSair;
-    private JLabel  lblHistorico;
+    private JLabel lblHistorico;
     private JLabel lblMsg;
     private JPanel pnlContent;
     private Socket socket;
@@ -51,6 +53,7 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
     private JTextField txtIP;
     private JTextField txtPorta;
     private JTextField txtNome;
+    private Cliente cliente;
 
     public ChatClienDevMedia() throws IOException {
         JLabel lblMessage = new JLabel("Verificar!");
@@ -96,52 +99,51 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
 
     public void conectar() throws IOException {
         socket = new Socket(txtIP.getText(), Integer.parseInt(txtPorta.getText()));
-        ou = socket.getOutputStream();
-        ouw = new OutputStreamWriter(ou);
-        bfw = new BufferedWriter(ouw);
-        bfw.write(txtNome.getText() + "\r\n");
-        bfw.flush();
+        cliente = new Cliente(txtNome.getText(), txtPorta.getText(), "123456");
+        String msg = "Teste";
+        ObjectOutputStream teste = new ObjectOutputStream(socket.getOutputStream());
+        teste.flush();
+        teste.writeObject(msg);
+
     }
 
     public void enviarMensagem(String msg) throws IOException {
 
-        if (msg.equals("Sair")) {
-            bfw.write("Desconectado \r\n");
-            texto.append("Desconectado \r\n");
-        } else {
-            bfw.write(msg + "\r\n");
-            texto.append(txtNome.getText() + " diz -> " + txtMsg.getText() + "\r\n");
-        }
-        bfw.flush();
+        ObjectOutputStream teste = new ObjectOutputStream(socket.getOutputStream());
+        teste.flush();
+        teste.writeObject(msg);
+        texto.append(txtNome.getText() + " diz -> " + txtMsg.getText() + "\r\n");
+
         txtMsg.setText("");
     }
 
     public void escutar() throws IOException {
-
-        InputStream in = socket.getInputStream();
-        InputStreamReader inr = new InputStreamReader(in);
-        BufferedReader bfr = new BufferedReader(inr);
         String msg = "";
 
         while (!"Sair".equalsIgnoreCase(msg)) {
-            if (bfr.ready()) {
-                msg = bfr.readLine();
-                if (msg.equals("Sair")) {
-                    texto.append("Servidor caiu! \r\n");
-                } else {
-                    texto.append(msg + "\r\n");
-                }
+
+            try {
+                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                msg = (String) inputStream.readObject();
+                texto.append(msg + "\r\n");
+            } catch (IOException ex) {
+                System.out.println("Erro recebendo messagem: " + ex.getMessage());
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Erro recebendo messagem na Classe: " + ex.getMessage());
             }
         }
     }
 
-    public void sair() throws IOException {
+    public void sair() throws IOException, InterruptedException {
 
-        enviarMensagem("Sair");
-        bfw.close();
-        ouw.close();
-        ou.close();
+        ObjectOutputStream teste = new ObjectOutputStream(socket.getOutputStream());
+        teste.flush();
+        teste.writeObject("slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj");
+        texto.append("Desconectado \r\n");
         socket.close();
+        Thread.sleep(200);
+        dispose();
+
     }
 
     @Override
@@ -156,6 +158,8 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
         } catch (IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ChatClienDevMedia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

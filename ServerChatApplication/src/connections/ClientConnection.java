@@ -2,53 +2,59 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package socket;
+package connections;
 
-import entities.Cliente;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.ServerSocket;
+import entities.User;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author beto_
  */
-public class Servidor implements Runnable {
+public class ClientConnection implements Runnable {
 
-    private Socket con;
-    private InputStream in;
-    private InputStreamReader inr;
-    private BufferedReader bfr;
-    private ArrayList<BufferedWriter> clientes;
-    private String nome;
+    private Socket connection;
+    private List<User> users;
     private Boolean stop;
+    private Message message;
 
-    public Servidor(Socket con, ArrayList<BufferedWriter> clientes) {
-        this.con = con;
-        this.stop = false;
-        this.clientes = clientes;
-        try {
-            in = con.getInputStream();
-            inr = new InputStreamReader(in);
-            bfr = new BufferedReader(inr);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+    public ClientConnection(Socket connection, List<User> users) {
+        this.connection = connection;
+        this.users = users;
+        message = new Message();
+        stop = false;
         new Thread(this).start();
-
     }
 
+    @Override
     public void run() {
+        try {
+            User user = new User();
+            String msg;
+            msg = message.receivedMessage(connection);
+            System.out.println(msg);
+            while (!msg.equals("slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj")) {
+                msg = message.receivedMessage(connection);
+                System.out.println(msg);
+            }
+            //Definir a comunicação inicial como: Nome:Porta:Password
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /*
+    
+    String strMain = "Alpha, Beta, Delta, Gamma, Sigma";
+    String[] arrSplit = strMain.split(", ");
+    for (int i=0; i < arrSplit.length; i++)
+    {
+      System.out.println(arrSplit[i]);
+    }
+  }
+    
+        public void run() {
         try {
             String msg;
             OutputStream ou = this.con.getOutputStream();
@@ -87,8 +93,9 @@ public class Servidor implements Runnable {
             }
         }
     }
-
+     */
     public synchronized void stop() {
         stop = true;
     }
+
 }
