@@ -109,7 +109,7 @@ public class JfrmPrincipal extends javax.swing.JFrame {
             serverSocket = new ServerSocket(port);
             JOptionPane.showMessageDialog(null, "Servidor conectador na porta: " +  port);
             txtLog.append("Servidor ativo na porta: " +  port + "\r\n");
-            server = new ServerSide(serverSocket);
+            server = new ServerSide(serverSocket, txtLog);
             onDeactive();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

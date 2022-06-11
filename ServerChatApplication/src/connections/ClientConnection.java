@@ -7,6 +7,7 @@ package connections;
 import entities.User;
 import java.net.Socket;
 import java.util.List;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -18,10 +19,12 @@ public class ClientConnection implements Runnable {
     private List<User> users;
     private Boolean stop;
     private Message message;
-
-    public ClientConnection(Socket connection, List<User> users) {
+    private JTextArea txtLog;
+    
+    public ClientConnection(Socket connection, List<User> users, JTextArea txtLog) {
         this.connection = connection;
         this.users = users;
+        this.txtLog = txtLog;
         message = new Message();
         stop = false;
         new Thread(this).start();
@@ -33,11 +36,13 @@ public class ClientConnection implements Runnable {
             User user = new User();
             String msg;
             msg = message.receivedMessage(connection);
+            txtLog.append("Novo Cliente Conectado: " + msg + "\r\n");
             System.out.println(msg);
             while (!msg.equals("slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj")) {
                 msg = message.receivedMessage(connection);
                 System.out.println(msg);
             }
+            txtLog.append("Cliente Desconectado: " + msg + "\r\n");
             //Definir a comunicação inicial como: Nome:Porta:Password
         } catch (Exception e) {
             System.out.println(e.getMessage());

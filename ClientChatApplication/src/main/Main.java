@@ -4,6 +4,8 @@
  */
 package main;
 
+import form.JfrmLogin;
+
 /**
  *
  * @author beto_
@@ -15,6 +17,8 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        JfrmLogin app = new JfrmLogin();
+        app.setVisible(true);
     }
     
 }

@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -20,8 +21,11 @@ public class ServerSide implements Runnable {
     private List<User> users;
     private ServerSocket server;
     private Boolean end;
-
-    public ServerSide(ServerSocket server) {
+    private JTextArea txtLog;
+    
+    
+    public ServerSide(ServerSocket server, JTextArea txtLog) {
+        this.txtLog = txtLog;
         this.users = new ArrayList<User>();
         this.end = false;
         this.server = server;
@@ -34,7 +38,7 @@ public class ServerSide implements Runnable {
             while (true) {
                 Socket connection;
                 connection = server.accept();
-                ClientConnection client = new ClientConnection(connection, users);
+                ClientConnection client = new ClientConnection(connection, users, txtLog);
                 synchronized (this) {
                     if (end) {
                         break;
