@@ -4,7 +4,7 @@
  */
 package entities;
 
-import java.io.BufferedWriter;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -13,17 +13,13 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
     private String nome;
-    private String password;
-    private Integer port;
-    private BufferedWriter bufferedWriter;
+    private ObjectOutputStream objectOutputStream;
     
     public User(){}
 
-    public User(String nome, String password, Integer port, BufferedWriter bufferedWriter) {
+    public User(String nome, ObjectOutputStream objectOutputStream) {
         this.nome = nome;
-        this.password = password;
-        this.port = port;
-        this.bufferedWriter = bufferedWriter;
+        this.objectOutputStream = objectOutputStream;
     }
 
     public String getNome() {
@@ -34,33 +30,19 @@ public class User implements Serializable {
         this.nome = nome;
     }
 
-    public String getPassword() {
-        return password;
+    public ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public BufferedWriter getBufferedWriter() {
-        return bufferedWriter;
-    }
-
-    public void setBufferedWriter(BufferedWriter bufferedWriter) {
-        this.bufferedWriter = bufferedWriter;
+    public void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
+        this.objectOutputStream = objectOutputStream;
     }
 
     @Override
     public String toString() {
-        return "User{" + "nome=" + nome + ", password=" + password + ", port=" + port + ", bufferedWriter=" + bufferedWriter + '}';
-    }  
+        return "User{" + "nome=" + nome + ", objectOutputStream=" + objectOutputStream + '}';
+    }
+
+    
     
 }

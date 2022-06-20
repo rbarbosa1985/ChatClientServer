@@ -100,7 +100,7 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
     public void conectar() throws IOException {
         socket = new Socket(txtIP.getText(), Integer.parseInt(txtPorta.getText()));
         cliente = new Cliente(txtNome.getText(), txtPorta.getText(), "123456");
-        String msg = "Teste";
+        String msg = txtNome.getText();
         ObjectOutputStream teste = new ObjectOutputStream(socket.getOutputStream());
         teste.flush();
         teste.writeObject(msg);
@@ -111,7 +111,7 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
 
         ObjectOutputStream teste = new ObjectOutputStream(socket.getOutputStream());
         teste.flush();
-        teste.writeObject(msg);
+        teste.writeObject("Cliente; " + msg);
         texto.append(txtNome.getText() + " diz -> " + txtMsg.getText() + "\r\n");
 
         txtMsg.setText("");
@@ -120,7 +120,7 @@ public class ChatClienDevMedia extends JFrame implements ActionListener, KeyList
     public void escutar() throws IOException {
         String msg = "";
 
-        while (!"Sair".equalsIgnoreCase(msg)) {
+        while (!"slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj".equalsIgnoreCase(msg)) {
 
             try {
                 ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());

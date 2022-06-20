@@ -5,6 +5,7 @@
 package connections;
 
 import entities.User;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 import javax.swing.JTextArea;
@@ -36,13 +37,27 @@ public class ClientConnection implements Runnable {
             User user = new User();
             String msg;
             msg = message.receivedMessage(connection);
+            user.setNome(msg);
+            user.setObjectOutputStream(new ObjectOutputStream(connection.getOutputStream()));
             txtLog.append("Novo Cliente Conectado: " + msg + "\r\n");
-            System.out.println(msg);
+            users.add(user);
+            System.out.println(users);
             while (!msg.equals("slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj")) {
                 msg = message.receivedMessage(connection);
+                String[] decoded = message.decodeMessage(msg);
+                if (decoded[0].equals("all")){
+                    
+                }else{
+                    message.sendMessage(connection, decoded);
+                }
                 System.out.println(msg);
             }
-            txtLog.append("Cliente Desconectado: " + msg + "\r\n");
+            txtLog.append("Cliente Desconectado: " + user.getNome() + "\r\n");
+            for (User cli : users){
+                if(cli.getNome().equals(user.getNome())){
+                    users.remove(cli);
+                }
+            }
             //Definir a comunicação inicial como: Nome:Porta:Password
         } catch (Exception e) {
             System.out.println(e.getMessage());

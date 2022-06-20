@@ -4,10 +4,12 @@
  */
 package connections;
 
+import entities.User;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 
 /**
  *
@@ -17,11 +19,25 @@ public class Message {
     
     public Message(){}
     
-    public boolean sendMessage(Socket connection, String message){
+    public boolean sendMessage(Socket connection, String[] message){
         try{
             ObjectOutputStream outputStream = new ObjectOutputStream(connection.getOutputStream());
             outputStream.flush();
             outputStream.writeObject(message);
+            return true;
+        }catch(IOException ex){
+            System.out.println("Erro mandando mensagem: " + ex.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public boolean sendToAllMessage(Socket connection, String message, List<User> users){
+        try{
+            for (User user : users){
+                user.getObjectOutputStream().flush();
+                user.getObjectOutputStream().writeObject(message);
+            }
             return true;
         }catch(IOException ex){
             System.out.println("Erro mandando mensagem: " + ex.getMessage());
@@ -44,4 +60,12 @@ public class Message {
         
         return message;
     }
+    
+    public String[] decodeMessage(String msg){
+        String[] decoded = msg.split("; ");
+        return decoded;
+    }
+    
+    //String strMain = "Alpha, Beta, Delta, Gamma, Sigma";
+    //String[] arrSplit = strMain.split(", ");
 }

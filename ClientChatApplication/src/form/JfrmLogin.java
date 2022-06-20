@@ -83,6 +83,11 @@ public class JfrmLogin extends javax.swing.JFrame {
         btnConectar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icons8-done-48.png"))); // NOI18N
         btnConectar.setText("Conectar");
         btnConectar.setNextFocusableComponent(btnCancelar);
+        btnConectar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConectarActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Bell MT", 1, 48)); // NOI18N
         jLabel1.setText("CHAT PRJ");
@@ -160,6 +165,10 @@ public class JfrmLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnConectarActionPerformed
 
     /**
      * @param args the command line arguments
