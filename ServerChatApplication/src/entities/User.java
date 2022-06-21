@@ -4,6 +4,7 @@
  */
 package entities;
 
+import java.io.BufferedWriter;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
@@ -41,8 +42,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User{" + "nome=" + nome + ", objectOutputStream=" + objectOutputStream + '}';
-    }
-
-    
+    }         
     
 }

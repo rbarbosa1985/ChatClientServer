@@ -4,6 +4,15 @@
  */
 package form;
 
+import connections.ClientConnect;
+import connections.Util;
+import entities.Chats;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import modelo.ModeloTabelaUser;
+
 /**
  *
  * @author beto_
@@ -17,6 +26,20 @@ public class JfrmPrincipal extends javax.swing.JFrame {
         initComponents();
     }
 
+    public JfrmPrincipal(Socket socket, ObjectInputStream inputStream, List<String> users, String nome) {
+        initComponents();
+        this.socket = socket;
+        this.inputStream = inputStream;
+        this.users = users;
+        this.nome = nome;
+        chats = new ArrayList<>();
+        util = new Util();
+        modeloUser = new ModeloTabelaUser(this.users);
+        tblContatos.setModel(modeloUser);
+        client = new ClientConnect(this.socket, this.nome, this.inputStream, users, modeloUser, chats);
+        System.out.println(this.users);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,21 +49,79 @@ public class JfrmPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblContatos = new javax.swing.JTable();
+        btnNovaConversa = new javax.swing.JButton();
+        btnSair = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Lista de Contatos Chat Client");
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(tblContatos);
+
+        btnNovaConversa.setText("Abrir Conversa");
+        btnNovaConversa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovaConversaActionPerformed(evt);
+            }
+        });
+
+        btnSair.setText("Desconectar");
+        btnSair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSairActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnNovaConversa, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(btnSair, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnNovaConversa, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
+        // TODO add your handling code here:
+        util.sendMessage(socket, "1111");
+        dispose();
+    }//GEN-LAST:event_btnSairActionPerformed
+
+    private void btnNovaConversaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovaConversaActionPerformed
+        // TODO add your handling code here:
+        String user = modeloUser.getUser(tblContatos.getSelectedRow());
+        JfrmMessage app = new JfrmMessage(socket, inputStream, user, chats);
+        app.setVisible(true);
+    }//GEN-LAST:event_btnNovaConversaActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -77,6 +158,18 @@ public class JfrmPrincipal extends javax.swing.JFrame {
         });
     }
 
+    private Socket socket;
+    private Util util;
+    private ClientConnect client;
+    private ObjectInputStream inputStream;
+    private ModeloTabelaUser modeloUser;
+    private List<String> users;
+    private String nome;
+    private List<Chats> chats;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnNovaConversa;
+    private javax.swing.JButton btnSair;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblContatos;
     // End of variables declaration//GEN-END:variables
 }

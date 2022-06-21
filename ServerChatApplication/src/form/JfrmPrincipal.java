@@ -22,6 +22,7 @@ public class JfrmPrincipal extends javax.swing.JFrame {
     public JfrmPrincipal() {
         initComponents();
         onActive();
+        btnConectar.requestFocusInWindow();
     }
 
     /**
@@ -40,6 +41,7 @@ public class JfrmPrincipal extends javax.swing.JFrame {
         txtLog = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Servidor Chat");
 
         btnConectar.setText("Conectar");
         btnConectar.addActionListener(new java.awt.event.ActionListener() {

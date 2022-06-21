@@ -4,6 +4,22 @@
  */
 package form;
 
+import connections.Util;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author beto_
@@ -15,6 +31,12 @@ public class JfrmLogin extends javax.swing.JFrame {
      */
     public JfrmLogin() {
         initComponents();
+        this.users = new ArrayList<String>();
+        users.add("Todos");
+        this.util = new Util();
+        edtIp.setText("127.0.0.1");
+        edtPort.setText("7777");
+        edtNome.requestFocusInWindow();
     }
 
     /**
@@ -37,8 +59,10 @@ public class JfrmLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         edtNome.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        edtNome.setNextFocusableComponent(btnConectar);
         edtNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edtNomeActionPerformed(evt);
@@ -168,6 +192,53 @@ public class JfrmLogin extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         // TODO add your handling code here:
+        try {
+            String message = "";
+            socket = new Socket(edtIp.getText(), Integer.parseInt(edtPort.getText()));
+            String msg = edtNome.getText();
+            util.sendMessage(socket, msg);
+            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+            message = util.receivedMessage(inputStream);
+            if (message.equals("NOT")) {
+                socket.close();
+                JOptionPane.showMessageDialog(null, "Nome de Usuário já utilizado!!", "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {               
+                while (!message.equals("OK")) {
+                    users.add(message);
+                    message = util.receivedMessage(inputStream);
+                }
+                System.out.println(users);
+                JfrmPrincipal app = new JfrmPrincipal(socket, inputStream, users, edtNome.getText());
+                app.setTitle("Chat: " + edtNome.getText());
+                app.setVisible(true);
+                dispose();
+            }
+            /*
+            if (message.equals("NOT")) {
+                socket.close();
+                JOptionPane.showMessageDialog(null, "Nome de Usuário já utilizado!!", "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                while (!message.equals("OK")) {
+                    try {
+                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                        message = (String) inputStream.readObject();
+                        users.add(message);
+                    } catch (IOException ex) {
+                        System.out.println("Erro recebendo messagem: " + ex.getMessage());
+                    } catch (ClassNotFoundException ex) {
+                        System.out.println("Erro recebendo messagem na Classe: " + ex.getMessage());
+                    }
+                }
+                System.out.println(users);
+                JfrmPrincipal app2 = new JfrmPrincipal();
+                app2.setVisible(true);
+                dispose();
+            }*/
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }//GEN-LAST:event_btnConectarActionPerformed
 
     /**
@@ -205,6 +276,9 @@ public class JfrmLogin extends javax.swing.JFrame {
         });
     }
 
+    private Socket socket;
+    private List<String> users;
+    private Util util;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConectar;

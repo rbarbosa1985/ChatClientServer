@@ -5,7 +5,15 @@
 package connections;
 
 import entities.User;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.Socket;
 import java.util.List;
 import javax.swing.JTextArea;
@@ -19,14 +27,16 @@ public class ClientConnection implements Runnable {
     private Socket connection;
     private List<User> users;
     private Boolean stop;
-    private Message message;
+    private Util message;
     private JTextArea txtLog;
-    
-    public ClientConnection(Socket connection, List<User> users, JTextArea txtLog) {
+    private ObjectOutputStream outputStream;
+
+    public ClientConnection(Socket connection, List<User> users, JTextArea txtLog) throws IOException {
         this.connection = connection;
         this.users = users;
         this.txtLog = txtLog;
-        message = new Message();
+        message = new Util();
+        outputStream = new ObjectOutputStream(connection.getOutputStream());
         stop = false;
         new Thread(this).start();
     }
@@ -38,25 +48,44 @@ public class ClientConnection implements Runnable {
             String msg;
             msg = message.receivedMessage(connection);
             user.setNome(msg);
-            user.setObjectOutputStream(new ObjectOutputStream(connection.getOutputStream()));
-            txtLog.append("Novo Cliente Conectado: " + msg + "\r\n");
-            users.add(user);
-            System.out.println(users);
-            while (!msg.equals("slkjdl;kfjlak;jfkl;asdjflk;asdjfl;kasdjflk;asdjflasjdfl;jsadl;fj")) {
-                msg = message.receivedMessage(connection);
-                String[] decoded = message.decodeMessage(msg);
-                if (decoded[0].equals("all")){
-                    
-                }else{
-                    message.sendMessage(connection, decoded);
+            user.setObjectOutputStream(outputStream);
+            if (message.testUser(msg, users)) {
+                users.add(user);
+                System.out.println(users);
+                message.listUsers(users, outputStream, msg);
+                txtLog.append("Cliente Conectado: " + user.getNome() + "\r\n");
+                message.sendToAllMessage(connection, "111;00;00;00;", users, user);
+                while (true) {
+                    msg = message.receivedMessage(connection);
+                    String[] decoded = message.decodeMessage(msg);
+                    if (decoded[0].equals("1111")){
+                        break;
+                    } else if ("111".equalsIgnoreCase(decoded[0])){
+                        message.listUsers(users, user.getObjectOutputStream(), user.getNome());
+                    }else if("11".equalsIgnoreCase(decoded[0])){
+                        message.sendToAllMessage(connection, decoded[1], users, user);
+                    }else if("01".equalsIgnoreCase(decoded[0])){
+                        if ("Todos".equalsIgnoreCase(decoded[1])){
+                            message.sendToAllMessage(connection, decoded[2], users, user);
+                        }else{
+                            message.sendMessage(decoded, users, user);
+                        }
+                        
+                    }else if("1".equalsIgnoreCase(decoded[0])){
+                        message.sendMessage(decoded, users, user);
+                    }
                 }
-                System.out.println(msg);
-            }
-            txtLog.append("Cliente Desconectado: " + user.getNome() + "\r\n");
-            for (User cli : users){
-                if(cli.getNome().equals(user.getNome())){
-                    users.remove(cli);
+                txtLog.append("Cliente Desconectado: " + user.getNome() + "\r\n");
+                message.sendMessage(connection, "11111", outputStream);
+                for (User cli : users) {
+                    if (cli.getNome().equals(user.getNome())) {
+                        users.remove(cli);
+                    }
                 }
+                message.sendToAllMessage(connection, "111;00;00;00;", users, user);
+            }else{
+                message.sendMessage(connection, "NOT", outputStream);
+                stop = true;
             }
             //Definir a comunicação inicial como: Nome:Porta:Password
         } catch (Exception e) {
@@ -64,56 +93,6 @@ public class ClientConnection implements Runnable {
         }
     }
 
-    /*
-    
-    String strMain = "Alpha, Beta, Delta, Gamma, Sigma";
-    String[] arrSplit = strMain.split(", ");
-    for (int i=0; i < arrSplit.length; i++)
-    {
-      System.out.println(arrSplit[i]);
-    }
-  }
-    
-        public void run() {
-        try {
-            String msg;
-            OutputStream ou = this.con.getOutputStream();
-            Writer ouw = new OutputStreamWriter(ou);
-            BufferedWriter bfw = new BufferedWriter(ouw);
-            clientes.add(bfw);
-            System.out.println(bfw);
-            System.out.println(clientes);
-            nome = msg = bfr.readLine();
-            System.out.println(nome);
-            while (!"Sair".equalsIgnoreCase(msg) && msg != null) {
-                msg = bfr.readLine();
-                sendToAll(bfw, msg);
-                System.out.println(msg);
-                synchronized (this) {
-                    if(this.stop){
-                        System.out.println("socket.Servidor.run()");
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-    }
-
-    public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
-        BufferedWriter bwS;
-
-        for (BufferedWriter bw : clientes) {
-            bwS = (BufferedWriter) bw;
-            if (!(bwSaida == bwS)) {
-                bw.write(nome + " -> " + msg + "\r\n");
-                bw.flush();
-            }
-        }
-    }
-     */
     public synchronized void stop() {
         stop = true;
     }
