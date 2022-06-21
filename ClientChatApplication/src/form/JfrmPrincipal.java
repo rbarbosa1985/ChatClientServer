@@ -37,7 +37,6 @@ public class JfrmPrincipal extends javax.swing.JFrame {
         modeloUser = new ModeloTabelaUser(this.users);
         tblContatos.setModel(modeloUser);
         client = new ClientConnect(this.socket, this.nome, this.inputStream, users, modeloUser, chats);
-        System.out.println(this.users);
     }
 
     /**

@@ -127,18 +127,16 @@ public class JfrmLogin extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                                 .addComponent(btnConectar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(73, 73, 73)
-                                .addComponent(edtPort))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
-                                    .addComponent(jLabel3))
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(edtPort)
                                     .addComponent(edtNome)
                                     .addComponent(edtIp, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)))))
                     .addGroup(layout.createSequentialGroup()
@@ -207,34 +205,12 @@ public class JfrmLogin extends javax.swing.JFrame {
                     users.add(message);
                     message = util.receivedMessage(inputStream);
                 }
-                System.out.println(users);
                 JfrmPrincipal app = new JfrmPrincipal(socket, inputStream, users, edtNome.getText());
                 app.setTitle("Chat: " + edtNome.getText());
                 app.setVisible(true);
                 dispose();
             }
-            /*
-            if (message.equals("NOT")) {
-                socket.close();
-                JOptionPane.showMessageDialog(null, "Nome de Usuário já utilizado!!", "Erro", JOptionPane.ERROR_MESSAGE);
-            } else {
-                while (!message.equals("OK")) {
-                    try {
-                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                        message = (String) inputStream.readObject();
-                        users.add(message);
-                    } catch (IOException ex) {
-                        System.out.println("Erro recebendo messagem: " + ex.getMessage());
-                    } catch (ClassNotFoundException ex) {
-                        System.out.println("Erro recebendo messagem na Classe: " + ex.getMessage());
-                    }
-                }
-                System.out.println(users);
-                JfrmPrincipal app2 = new JfrmPrincipal();
-                app2.setVisible(true);
-                dispose();
-            }*/
-
+            
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

@@ -34,8 +34,8 @@ public class JfrmMessage extends javax.swing.JFrame {
         this.nome = nome;
         this.chats = chats;
         util = new Util();
+        
         txtMensagens.append(decode[1] + ": " + decode[2] + "\r\n");
-        client = new ClientMenssage(socket, txtMensagens, lblPessoa.getText(), this.inputStream, chats);
     }
     
     public JfrmMessage(Socket socket, ObjectInputStream inputStream, String nome, List<Chats> chats) {
@@ -45,7 +45,8 @@ public class JfrmMessage extends javax.swing.JFrame {
         lblPessoa.setText(nome);
         util = new Util();
         this.chats = chats;
-        client = new ClientMenssage(socket, txtMensagens, lblPessoa.getText(), this.inputStream, chats);
+        util.localiza(chats, nome);
+        util.localizaChat(chats, nome, this);
     }
 
     /**
@@ -164,6 +165,10 @@ public class JfrmMessage extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnEnviarActionPerformed
 
+    public void atulizaMensagem(String[] decode){
+        txtMensagens.append(decode[1] + ": " + decode[2] + "\n\r");
+    }
+    
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
         for (Chats chat : chats){

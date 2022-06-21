@@ -118,6 +118,4 @@ public class Util {
         return decoded;
     }
 
-    //String strMain = "Alpha, Beta, Delta, Gamma, Sigma";
-    //String[] arrSplit = strMain.split(", ");
 }

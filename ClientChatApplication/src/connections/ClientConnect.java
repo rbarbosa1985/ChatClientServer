@@ -8,7 +8,6 @@ import entities.Chats;
 import form.JfrmMessage;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextArea;
 import modelo.ModeloTabelaUser;
@@ -50,11 +49,9 @@ public class ClientConnect implements Runnable {
         util = new Util();
         this.nome = nome;
         this.chats = chats;
-        System.out.println("Nome: " + nome);
         stop = false;
         this.users = users;
         this.modeloUser = modeloUser;
-
         new Thread(this).start();
     }
 
@@ -63,25 +60,41 @@ public class ClientConnect implements Runnable {
         String msg = "";
         while (!"11111".equalsIgnoreCase(msg)) {
             msg = util.receivedMessage(inputStream);
-            System.out.println("Mensagem: ::: " + msg);
             if (msg != null) {
                 String decode[] = util.decodeMessage(msg);
                 if ("111".equalsIgnoreCase(decode[0])) {
                     util.updateUsers(connection, inputStream, users);
                     modeloUser.atualizarTabela();
                 }
-                System.out.println("decode: " + decode.length + " ::: " +decode.toString());
                 if (decode.length>1) {
                     if (!util.localiza(chats, decode[1])) {
-                        if ("1".equalsIgnoreCase(decode[0])) {
+                        if ("01".equalsIgnoreCase(decode[0])) {
                             JfrmMessage app = new JfrmMessage(decode, nome, connection, inputStream, users, modeloUser, chats);
                             app.setVisible(true);
+                            util.localizaChat(chats, decode[1], app);
                         } else if ("11".equalsIgnoreCase(decode[0])) {
                             JfrmMessage app = new JfrmMessage(decode, nome, connection, inputStream, users, modeloUser, chats);
                             app.setVisible(true);
+                            util.localizaChat(chats, decode[1], app);
                         } else if ("01".equalsIgnoreCase(decode[0])) {
                             JfrmMessage app = new JfrmMessage(decode, nome, connection, inputStream, users, modeloUser, chats);
                             app.setVisible(true);
+                            util.localizaChat(chats, decode[1], app);
+                        }
+                    }else {
+                        System.out.println("Nome do Cliente: " + nome);
+                        if ("1".equalsIgnoreCase(decode[0])) {
+                            if (util.localizaUser(chats, decode[1]).equals(decode[1])){
+                                util.localizaForm(chats, decode[1]).atulizaMensagem(decode);
+                            }
+                        } else if ("11".equalsIgnoreCase(decode[0])) {
+                              if (util.localizaUser(chats, decode[1]).equals(decode[1])){
+                                util.localizaForm(chats, decode[1]).atulizaMensagem(decode);
+                            }
+                        } else if ("01".equalsIgnoreCase(decode[0])) {
+                                if (util.localizaUser(chats, decode[1]).equals(decode[1])){
+                                util.localizaForm(chats, decode[1]).atulizaMensagem(decode);
+                            }
                         }
                     }
                 }

@@ -5,6 +5,7 @@
 package connections;
 
 import entities.Chats;
+import form.JfrmMessage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -100,5 +101,31 @@ public class Util {
         chats.add(chat);
         System.out.println("Localiza2: " + nome);
         return false;
+    }
+    
+    public String localizaUser(List<Chats> chats, String nome){
+        for (Chats chat : chats){
+            if(chat.getNome().equals(nome)){
+                return chat.getNome();
+            }
+        }
+        return "";
+    }
+    
+    public JfrmMessage localizaForm(List<Chats> chats, String nome){
+        for (Chats chat : chats){
+            if(chat.getNome().equals(nome)){
+                return chat.getApp();
+            }
+        }
+        return null;
+    }
+    
+    public void localizaChat(List<Chats> chats, String nome, JfrmMessage app){
+        for (Chats chat : chats){
+            if(chat.getNome().equals(nome)){
+                chat.setApp(app);
+            }
+        }
     }
 }
